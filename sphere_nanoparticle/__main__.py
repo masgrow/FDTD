@@ -1,4 +1,6 @@
 import initial_values as iv
 import custom_materials as cm
 
-iv.init_values(cm.material_lib())
+
+def arg():
+    return iv.init_values(cm.material_lib())

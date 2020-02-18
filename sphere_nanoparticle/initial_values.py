@@ -13,8 +13,12 @@ def init_values(material_lib):
                         help='Source wavelength wl/a (default: 0.5 um)')
     parser.add_argument('--wid', metavar='width', type=float, default=0.5,
                         help='The width omega used in the Gaussian')
+    parser.add_argument('--res', metavar='remote', type=float, default=0.01,
+                        help='Remoteness of a source from a particle (default: 0.001 um')
     parser.add_argument('--mod', metavar='mode', type=str, default='sim',
                         help='Harminv (harm) or start simulation (sim) (default: sim)')
-    parser.add_argument('--mat', metavar='material', choices=material_lib,
+    parser.add_argument('--mat', metavar='material', type=str, choices=material_lib,
                         help='material nanoparticle (default: custom_ag)')
+    parser.add_argument('--pml', metavar='PML', type=float, default=0.5,
+                        help='PML thickness (default: 0.05 um')
     return parser.parse_args()
