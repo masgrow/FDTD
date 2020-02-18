@@ -2,8 +2,7 @@ from meep import LorentzianSusceptibility, Medium
 
 
 def material_lib():
-    lib = ['custom_ag']
-    return lib
+    return tuple(['custom_ag'])
 
 
 def material_lib_dict(material_name):
