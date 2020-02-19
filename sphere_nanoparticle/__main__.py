@@ -6,13 +6,10 @@ import datetime
 
 def modes_output(modes, material):
     def list_to_str(modes):
-        return '\nDate:   ' + datetime.datetime.now().__str__() + '   Material:   ' \
-               + material + '\n' + modes.__str__()
+        return 'Date:   ' + datetime.datetime.now().__str__() + '   Material:   ' + material + '   wavelength:  ' \
+               + arg().wl.__str__() + ' width:   ' + arg().wid.__str__() + '\n' + modes.__str__() + '\n '
 
-    def op():
-        return open('sphere_nanoparticle/output/modes', 'a')
-
-    return op().write(list_to_str(modes))
+    return open('sphere_nanoparticle/output/modes', 'a').write(list_to_str(modes))
 
 
 def arg():

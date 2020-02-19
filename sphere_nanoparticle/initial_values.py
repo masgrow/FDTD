@@ -11,8 +11,8 @@ def init_values(material_lib):
                         help='Radius nanoparticle a*rad (default: 0.03 um')
     parser.add_argument('--wl', metavar='wavelength', type=float, default=3.9,
                         help='Source wavelength wl/a (default: 0.39 um)')
-    parser.add_argument('--wid', metavar='width', type=float, default=0.7,
-                        help='The width omega used in the Gaussian')
+    parser.add_argument('--wid', metavar='width', type=float, default=1,
+                        help='The width omega used in the Gaussian (default: 1')
     parser.add_argument('--rem', metavar='remote', type=float, default=0.01,
                         help='Remoteness of a source from a particle (default: 0.001 um')
     parser.add_argument('--mod', metavar='mode', type=str, default='sim',

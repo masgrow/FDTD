@@ -10,26 +10,22 @@ def create(res, radius, material, wavelength, width, remote, pml):
             Source(GaussianSource(frequency=1 / wavelength, width=width), Ez, center=Vector3(remote + radius, 0, 0))]
 
     def cell(radius, pml):
-        def sxyz(radius, pml):
-            return 2 * (radius + 0.5 * radius + pml)
+        sxyz = lambda radius, pml: 2 * (radius + 0.5 * radius + pml)
 
         return Vector3(sxyz(radius, pml), sxyz(radius, pml), sxyz(radius, pml))
 
-    def sim(res, radius, material, wavelength, width, remote, pml):
-        return Simulation(cell_size=cell(radius, pml),
-                          resolution=res,
-                          boundary_layers=[PML(pml)],
-                          geometry=nanoparticle(radius, material),
-                          sources=source(wavelength, width, remote))
-
-    return sim(res, radius, material, wavelength, width, remote, pml)
+    return Simulation(cell_size=cell(radius, pml),
+                      resolution=res,
+                      boundary_layers=[PML(pml)],
+                      geometry=nanoparticle(radius, material),
+                      sources=source(wavelength, width, remote))
 
 
 def mod(sim, remote, radius, wavelength, width, time):
-    def harm(sim, remote, radius, wavelength, width, time):
-        h = Harminv(Ez, Vector3(remote + radius, 0, 0), fcen=1 / wavelength, df=width)
-        sim.run(after_sources(h),
-                until_after_sources=time)
-        return h.modes
 
-    return harm(sim, remote, radius, wavelength, width, time)
+    h = Harminv(Ez, Vector3(remote + radius, 0, 0), fcen=1 / wavelength, df=width)
+    sim.run(after_sources(h),
+            until_after_sources=time)
+    return h.modes
+
+
