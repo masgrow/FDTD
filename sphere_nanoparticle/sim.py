@@ -1,4 +1,4 @@
-from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML
+from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv
 
 
 def create(res, radius, material, wavelength, width, remote, pml):
@@ -22,3 +22,7 @@ def create(res, radius, material, wavelength, width, remote, pml):
                           sources=source(wavelength, width, remote))
 
     return sim(res, radius, material, wavelength, width, remote, pml)
+
+
+def harm(sim):
+    return sim.run(until_after_sources=Harminv())
