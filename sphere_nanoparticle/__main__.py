@@ -18,10 +18,11 @@ def arg():
 
 if arg().mod == 'harm':
     modes_output(sim.mod(
-        sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem, arg().pml),
-        arg().rem,
-        arg().rad,
-        arg().wl,
-        arg().wid,
-        arg().t),
+        sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem,
+                   arg().pml),
+        arg().rem, arg().rad, arg().wl, arg().wid, arg().t),
         arg().mat)
+
+sim.init(
+    sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem, arg().pml),
+    arg().rad, arg().pml)
