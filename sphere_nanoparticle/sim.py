@@ -1,4 +1,4 @@
-from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv
+from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv, after_sources
 
 
 def create(res, radius, material, wavelength, width, remote, pml):
@@ -6,7 +6,8 @@ def create(res, radius, material, wavelength, width, remote, pml):
         return [Sphere(radius, material=material)]
 
     def source(wavelength, width, remote):
-        return [Source(GaussianSource(frequency=1 / wavelength, width=width), Ez, center=Vector3(remote, 0, 0))]
+        return [
+            Source(GaussianSource(frequency=1 / wavelength, width=width), Ez, center=Vector3(remote + radius, 0, 0))]
 
     def cell(radius, pml):
         def sxyz(radius, pml):
@@ -24,5 +25,11 @@ def create(res, radius, material, wavelength, width, remote, pml):
     return sim(res, radius, material, wavelength, width, remote, pml)
 
 
-def harm(sim):
-    return sim.run(until_after_sources=Harminv())
+def mod(sim, remote, radius, wavelength, width, time):
+    def harm(sim, remote, radius, wavelength, width, time):
+        h = Harminv(Ez, Vector3(remote + radius, 0, 0), fcen=1 / wavelength, df=width)
+        sim.run(after_sources(h),
+                until_after_sources=time)
+        return h.modes
+
+    return harm(sim, remote, radius, wavelength, width, time)

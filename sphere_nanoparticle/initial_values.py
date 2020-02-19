@@ -5,13 +5,13 @@ def init_values(material_lib):
     parser = argparse.ArgumentParser('FDTD calculations for some nanoparticles')
     parser.add_argument('--u', metavar='unit', type=float, default=0.1,
                         help='Unit of length a (default: 0.1 um), use unit length in um')
-    parser.add_argument('--res', metavar='resolution', type=int, default=50,
+    parser.add_argument('--res', metavar='resolution', type=int, default=20,
                         help='Resolution pixel/a (default: 500 pixel/um)')
-    parser.add_argument('--rad', metavar='radius', type=float, default=0.5,
-                        help='Radius nanoparticle a*rad (default: 0.05 um')
-    parser.add_argument('--wl', metavar='wavelength', type=float, default=5,
-                        help='Source wavelength wl/a (default: 0.5 um)')
-    parser.add_argument('--wid', metavar='width', type=float, default=0.5,
+    parser.add_argument('--rad', metavar='radius', type=float, default=0.3,
+                        help='Radius nanoparticle a*rad (default: 0.03 um')
+    parser.add_argument('--wl', metavar='wavelength', type=float, default=3.9,
+                        help='Source wavelength wl/a (default: 0.39 um)')
+    parser.add_argument('--wid', metavar='width', type=float, default=0.7,
                         help='The width omega used in the Gaussian')
     parser.add_argument('--rem', metavar='remote', type=float, default=0.01,
                         help='Remoteness of a source from a particle (default: 0.001 um')
@@ -21,4 +21,6 @@ def init_values(material_lib):
                         help='material nanoparticle (default: custom_ag)')
     parser.add_argument('--pml', metavar='PML', type=float, default=0.5,
                         help='PML thickness (default: 0.05 um')
+    parser.add_argument('--t', metavar='time', type=float, default=50,
+                        help='Simulation time (default: 50)')
     return parser.parse_args()
