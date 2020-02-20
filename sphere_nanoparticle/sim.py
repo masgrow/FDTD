@@ -1,4 +1,6 @@
-from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv, after_sources, Dielectric
+from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv, after_sources, Dielectric, \
+    at_every
+import numpy as np
 
 sxyz = lambda radius, pml: 2 * (radius + 0.5 * radius + pml)
 
@@ -28,8 +30,18 @@ def mod(sim, remote, radius, wavelength, width, time):
     return h.modes
 
 
-def init(sim, radius, pml):
+def output_dielectric(sim, radius, pml):
     sim.init_sim()
     return sim.get_array(component=Dielectric, center=Vector3(x=0, y=0),
                          size=Vector3(sxyz(radius, pml),
                                       sxyz(radius, pml)))
+
+
+def output_ez_step(sim, radius, pml):
+    def get():
+        return sim.get_array(component=Ez, center=Vector3(x=0, y=0),
+                             size=Vector3(sxyz(radius, pml),
+                                          sxyz(radius, pml)))
+
+    ez = []
+    return ez.append(get())

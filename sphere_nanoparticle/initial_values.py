@@ -5,14 +5,14 @@ def init_values(material_lib):
     parser = argparse.ArgumentParser('FDTD calculations for some nanoparticles')
     parser.add_argument('--u', metavar='unit', type=float, default=0.1,
                         help='Unit of length a (default: 0.1 um), use unit length in um')
-    parser.add_argument('--res', metavar='resolution', type=int, default=20,
+    parser.add_argument('--res', metavar='resolution', type=int, default=50,
                         help='Resolution pixel/a (default: 500 pixel/um)')
     parser.add_argument('--rad', metavar='radius', type=float, default=0.3,
                         help='Radius nanoparticle a*rad (default: 0.03 um')
     parser.add_argument('--wl', metavar='wavelength', type=float, default=3.9,
                         help='Source wavelength wl/a (default: 0.39 um)')
-    parser.add_argument('--wid', metavar='width', type=float, default=1,
-                        help='The width omega used in the Gaussian (default: 1')
+    parser.add_argument('--wid', metavar='width', type=float, default=0.7,
+                        help='The width omega used in the Gaussian (default: 0.7')
     parser.add_argument('--rem', metavar='remote', type=float, default=0.01,
                         help='Remoteness of a source from a particle (default: 0.001 um')
     parser.add_argument('--mod', metavar='mode', type=str, default='sim',

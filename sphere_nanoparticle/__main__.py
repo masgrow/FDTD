@@ -23,6 +23,9 @@ if arg().mod == 'harm':
         arg().rem, arg().rad, arg().wl, arg().wid, arg().t),
         arg().mat)
 
-sim.init(
-    sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem, arg().pml),
-    arg().rad, arg().pml)
+elif arg().mod == 'sim':
+    simulation = sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem,
+                            arg().pml)
+    sim.output_dielectric(simulation,
+                          arg().rad, arg().pml)
+    simulation.run(sim.output_ez_step(simulation, arg().rad, arg().pml), until=10)
