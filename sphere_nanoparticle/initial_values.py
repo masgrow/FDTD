@@ -23,4 +23,6 @@ def init_values(material_lib):
                         help='PML thickness (default: 0.05 um')
     parser.add_argument('--t', metavar='time', type=float, default=50,
                         help='Simulation time (default: 50)')
+    parser.add_argument('--n', metavar='name', type=str, default='nanoparticle',
+                        help='Name for output data and folder (default: nanoparticle')
     return parser.parse_args()

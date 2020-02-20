@@ -5,11 +5,17 @@ import datetime
 
 
 def modes_output(modes, material):
-    def list_to_str(modes):
-        return 'Date:   ' + datetime.datetime.now().__str__() + '   Material:   ' + material + '   wavelength:  ' \
-               + arg().wl.__str__() + ' width:   ' + arg().wid.__str__() + '\n' + modes.__str__() + '\n '
+    f = open('sphere_nanoparticle/output/' + arg().n + '_' + str(datetime.date) + 'modes', 'a')
 
-    return open('sphere_nanoparticle/output/modes', 'a').write(list_to_str(modes))
+    def list_to_str(modes):
+        f.write('Date:   ' + datetime.datetime.now().__str__())
+        f.write('   Material:   ' + material)
+        f.write('   wavelength:  ' + arg().wl.__str__())
+        f.write(' width:   ' + arg().wid.__str__())
+        f.write('\n' + modes.__str__() + '\n ')
+        f.close()
+
+    return list_to_str(modes)
 
 
 def arg():
@@ -26,6 +32,3 @@ if arg().mod == 'harm':
 elif arg().mod == 'sim':
     simulation = sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem,
                             arg().pml)
-    sim.output_dielectric(simulation,
-                          arg().rad, arg().pml)
-    simulation.run(sim.output_ez_step(simulation, arg().rad, arg().pml), until=10)
