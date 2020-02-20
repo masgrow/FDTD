@@ -48,3 +48,8 @@ elif arg().mod == 'sim':
     simulation = sim.create(arg().res, arg().rad, cm.material_lib_dict(arg().mat), arg().wl, arg().wid, arg().rem,
                             arg().pml)
     sim.output_dielectric(simulation, arg().rad, arg().pml, output_path('/eps'))
+    create_output_path(output_path('/ez'))
+    create_output_path(output_path('/ey'))
+    create_output_path(output_path('/ex'))
+    sim.start(simulation, arg().t, arg().dt, output_path('/ex/ex_'), output_path('/ey/ey_'), output_path('/ez/ez_'),
+              arg().rad, arg().pml)

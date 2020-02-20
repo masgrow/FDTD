@@ -25,4 +25,6 @@ def init_values(material_lib):
                         help='Simulation time (default: 50)')
     parser.add_argument('--n', metavar='name', type=str, default='nanoparticle',
                         help='Name for output data and folder (default: nanoparticle')
+    parser.add_argument('--dt', metavar='dtime', type=float, default=10.0,
+                        help='Time between component output E (default: 10.0')
     return parser.parse_args()

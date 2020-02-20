@@ -1,5 +1,5 @@
-from meep import Sphere, Source, GaussianSource, Ez, Vector3, Simulation, PML, Harminv, after_sources, Dielectric, \
-    at_every, simulation
+from meep import Sphere, Source, GaussianSource, Ez, Ex, Ey, Vector3, Simulation, PML, Harminv, after_sources, \
+    Dielectric, at_every
 import numpy as np
 
 sxyz = lambda radius, pml: 2 * (radius + 0.5 * radius + pml)
@@ -35,3 +35,28 @@ def output_dielectric(sim, radius, pml, path):
     eps = sim.get_array(component=Dielectric, center=Vector3(x=0, y=0),
                         size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
     return np.save(path, eps)
+
+
+def output_ez(sim, radius, pml, path_z):
+    ez = sim.get_array(component=Ez, center=Vector3(x=0, y=0),
+                       size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
+    return np.save(path_z, ez)
+
+
+def output_ey(sim, radius, pml, path_y):
+    ey = sim.get_array(component=Ey, center=Vector3(x=0, y=0),
+                       size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
+    return np.save(path_y, ey)
+
+
+def output_ex(sim, radius, pml, path_x):
+    ex = sim.get_array(component=Ex, center=Vector3(x=0, y=0),
+                       size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
+    return np.save(path_x, ex)
+
+
+def start(sim, time, dt, path_x, path_y, path_z, radius, pml):
+    sim.run(at_every(dt, output_ez(sim, radius=radius, pml=pml, path_z=path_z),
+                     output_ey(sim, radius=radius, pml=pml, path_y=path_y),
+                     output_ex(sim, radius=radius, pml=pml, path_x=path_x)),
+            until_after_sources=time)
