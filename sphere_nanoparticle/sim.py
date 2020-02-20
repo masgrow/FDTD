@@ -30,18 +30,8 @@ def mod(sim, remote, radius, wavelength, width, time):
     return h.modes
 
 
-def output_dielectric(sim, radius, pml):
+def output_dielectric(sim, radius, pml, path):
     sim.init_sim()
     eps = sim.get_array(component=Dielectric, center=Vector3(x=0, y=0),
                         size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
-    return np.save
-
-
-def output_ez_step(sim, radius, pml):
-    def get():
-        return sim.get_array(component=Ez, center=Vector3(x=0, y=0),
-                             size=Vector3(sxyz(radius, pml),
-                                          sxyz(radius, pml)))
-
-    ez = []
-    return ez.append(get())
+    return np.save(path, eps)
