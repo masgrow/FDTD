@@ -37,17 +37,19 @@ def output_dielectric(sim, radius, pml, path):
     return np.save(path, eps)
 
 
-def output_ez(sim, radius, pml, path_z):
+def sub_name_list(sim):
+    return print(sim.meep_time())
+
+
+def output_ez(sim, radius, pml, path_z, marker):
     ez = sim.get_array(component=Ez, center=Vector3(x=0, y=0),
                        size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
-    marker = sim.meep_time()
-    np.save(path_z, ez)
+    np.save(path_z + marker.__str__(), ez)
     return print(marker)
 
+
 def start(sim, time, dt, path_z, radius, pml):
-    sim.run(at_every(dt, output_ez(sim=sim, path_z=path_z, radius=radius, pml=pml)),
+    sim.run(at_every(dt, time_sim, output_ez(sim=sim, path_z=path_z, radius=radius, pml=pml)),
             until=time)
 
-
-def test_my_step(sim):
-    return print('all work')
+#
