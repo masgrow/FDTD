@@ -40,23 +40,14 @@ def output_dielectric(sim, radius, pml, path):
 def output_ez(sim, radius, pml, path_z):
     ez = sim.get_array(component=Ez, center=Vector3(x=0, y=0),
                        size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
-    return np.save(path_z, ez)
+    marker = sim.meep_time()
+    np.save(path_z, ez)
+    return print(marker)
+
+def start(sim, time, dt, path_z, radius, pml):
+    sim.run(at_every(dt, output_ez(sim=sim, path_z=path_z, radius=radius, pml=pml)),
+            until=time)
 
 
-def output_ey(sim, radius, pml, path_y):
-    ey = sim.get_array(component=Ey, center=Vector3(x=0, y=0),
-                       size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
-    return np.save(path_y, ey)
-
-
-def output_ex(sim, radius, pml, path_x):
-    ex = sim.get_array(component=Ex, center=Vector3(x=0, y=0),
-                       size=Vector3(sxyz(radius, pml), sxyz(radius, pml)))
-    return np.save(path_x, ex)
-
-
-def start(sim, time, dt, path_x, path_y, path_z, radius, pml):
-    sim.run(at_every(dt, output_ez(sim, radius=radius, pml=pml, path_z=path_z),
-                     output_ey(sim, radius=radius, pml=pml, path_y=path_y),
-                     output_ex(sim, radius=radius, pml=pml, path_x=path_x)),
-            until_after_sources=time)
+def test_my_step(sim):
+    return print('all work')

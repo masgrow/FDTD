@@ -51,5 +51,5 @@ elif arg().mod == 'sim':
     create_output_path(output_path('/ez'))
     create_output_path(output_path('/ey'))
     create_output_path(output_path('/ex'))
-    sim.start(simulation, arg().t, arg().dt, output_path('/ex/ex_'), output_path('/ey/ey_'), output_path('/ez/ez_'),
+    sim.start(simulation, arg().t, arg().dt, output_path('/ez/ez_'),
               arg().rad, arg().pml)
