@@ -2,11 +2,11 @@ from meep import Vector3, Sphere, Source, GaussianSource, Ez, Ey, Ex, Simulation
 
 
 def harm_run(resolution, radius, pml, material, wavelength, width, remote, time):
-    def s_x_y_z():
+    def s_xyz():
         return 2 * (radius + 0.5 * radius + pml)
 
     def cell():
-        return Vector3(s_x_y_z(), s_x_y_z(), s_x_y_z())
+        return Vector3(s_xyz(), s_xyz(), s_xyz())
 
     def particle():
         return Sphere(radius, material=material)
