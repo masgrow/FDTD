@@ -1,7 +1,7 @@
 from meep import Vector3, Sphere, Source, GaussianSource, Ez, Ey, Ex, Simulation, PML, after_sources, Harminv
 
 
-def harm_run(resolution, radius, pml, material, wavelength, width, remote, time):
+def harm_run(resolution, radius, pml, material, fcen, df, remote, time):
     def s_xyz():
         return 2 * (radius + 0.5 * radius + pml)
 
@@ -12,7 +12,7 @@ def harm_run(resolution, radius, pml, material, wavelength, width, remote, time)
         return Sphere(radius, material=material)
 
     def source():
-        return Source(GaussianSource(frequency=1 / wavelength, width=width),
+        return Source(GaussianSource(frequency=fcen, fwidth=df),
                       component=Ez,
                       center=Vector3(radius + remote, 0, 0))
 
@@ -24,16 +24,16 @@ def harm_run(resolution, radius, pml, material, wavelength, width, remote, time)
                           resolution=resolution)
 
     def mod(component):
-        h = Harminv(c=component, pt=Vector3(radius + remote, 0, 0), fcen=1 / wavelength, df=1 / width)
+        h = Harminv(c=component, pt=Vector3(radius + remote, 0, 0), fcen=fcen, df=df)
         sim().run(after_sources(h),
                   until_after_sources=time)
         return h.modes
 
     def out():
-        ex = mod(Ex)
-        ey = mod(Ey)
+        #ex = mod(Ex)
+        #ey = mod(Ey)
         ez = mod(Ez)
-        tup = (ex, ey, ez)
+        tup = ez
         return tup
 
     return out()
