@@ -10,8 +10,8 @@ def electric_field(name_simulation):
         return np.load('meep_sample/out/' + name_simulation + '/' + name + '.npz', mmap_mode='r', allow_pickle=True)
 
     eps = load_npz('eps')
-    ex = load_npz('ex')
-    ey = load_npz('ey')
+    #ex = load_npz('ex')
+    #ey = load_npz('ey')
     ez = load_npz('ez')
 
     def eps_save(comp, axes):
@@ -47,15 +47,10 @@ def electric_field(name_simulation):
         anim_comp.save('meep_sample/out/' + name_simulation + '/' + comp_name + '_' + str(np.size(comp, 0)) + '.mp4',
                        writer='ffmpeg', fps=5)
 
-
-
-
-
-    # eps_save(eps['eps_xy'], 'xy')
-    # eps_save(eps['eps_xz'], 'xz')
-    # eps_save(eps['eps_yz'], 'yz')
+    eps_save(eps['eps_xy'], 'xy')
+    eps_save(eps['eps_xz'], 'xz')
+    eps_save(eps['eps_yz'], 'yz')
     # save_comp_png(ex['ex'], 'ex', eps['eps_xy'])
     # save_comp_png(ey['ey'], 'ey', eps['eps_xy'])
-    # save_comp_png(ez['ez'], 'ez', eps['eps_xy'])
-    save_comp__mp4(ez['ez'], 'ez', eps['eps_xy'])
+    save_comp_png(ez['ez'], 'ez', eps['eps_xy'])
     return print('-done-')

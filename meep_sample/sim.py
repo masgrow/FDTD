@@ -74,11 +74,11 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
         ez_comp = list()
 
         sim().run(at_beginning(slice_dielectric, slice_xy),
-                  at_every(1/fcen/20, slice_xy),
+                  at_every((1/fcen)/20, slice_xy),
                   until_after_sources=1/fcen)
         np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
-        np.savez(path_e + 'ex', ex=ex_comp)
-        np.savez(path_e + 'ey', ey=ey_comp)
+        #np.savez(path_e + 'ex', ex=ex_comp)
+        #np.savez(path_e + 'ey', ey=ey_comp)
         np.savez(path_e + 'ez', ez=ez_comp)
         return print('---saved---')
 

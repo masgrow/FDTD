@@ -10,7 +10,7 @@ arg = iv.init_values(cm.material_lib())
 
 
 def out_path(name):
-    out = 'meep_sample/out/' + name
+    out = './meep_sample/out/' + name
     return out
 
 
