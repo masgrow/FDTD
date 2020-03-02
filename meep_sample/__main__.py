@@ -10,7 +10,7 @@ arg = iv.init_values(cm.material_lib())
 
 
 def out_path(name):
-    out = './meep_sample/out/' + name
+    out = 'meep_sample/out/' + name
     return out
 
 
@@ -21,7 +21,7 @@ def directory(name):
     return name_path
 
 
-if arg.mod == 'harm':
+if arg.out == 'harm':
     def modes_write(tup):
         f = open(out_path(arg.n + '/modes'), 'a')
         f.write('\n\n----start----')
@@ -45,7 +45,7 @@ if arg.mod == 'harm':
                         arg.fcen, arg.df, arg.rem, arg.t)
     modes_write(mod)
 
-elif arg.mod == 'sim':
+elif arg.out == 'sim':
     directory('/eps_img')
     directory('/ex_img')
     directory('/ey_img')
@@ -53,5 +53,5 @@ elif arg.mod == 'sim':
     path_e = directory('/')
     sim.sim_run(arg.res, arg.rad, arg.pml, cm.material_lib_dict(arg.mat, arg.u),
                 arg.fcen, arg.df, arg.rem, arg.t, arg.dt, path_e)
-elif arg.mod == 'vis_ecomp_xy':
+elif arg.out == 'gif_ez_xy':
     visualisation.electric_field(arg.n)

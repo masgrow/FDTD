@@ -3,7 +3,7 @@ from meep import Vector3, Sphere, Source, GaussianSource, Ez, Ey, Ex, Dielectric
 import numpy as np
 
 
-def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_e):
+def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_e, out):
     def s_xyz():
         return 2 * (radius + 0.5 * radius + pml)
 
@@ -46,6 +46,7 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
             xy()
             xz()
             yz()
+            return print('---slice eps---')
 
         def slice_xy(sim):
             def array_ex():
@@ -66,20 +67,30 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
             array_ex()
             array_ey()
             array_ez()
-            return sim.print_times()
+            return print('slice E comp\n' + ' time: ' + str(sim.meep_time()))
 
-        eps = list()
-        ex_comp = list()
-        ey_comp = list()
-        ez_comp = list()
+        if out == 'out_eps':
+            eps = list()
+            init = sim().init_sim()
+            slice_dielectric(init)
+            np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
+            print('---eps saved---')
 
-        sim().run(at_beginning(slice_dielectric, slice_xy),
-                  at_every((1/fcen)/20, slice_xy),
-                  until_after_sources=1/fcen)
-        np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
-        #np.savez(path_e + 'ex', ex=ex_comp)
-        #np.savez(path_e + 'ey', ey=ey_comp)
-        np.savez(path_e + 'ez', ez=ez_comp)
-        return print('---saved---')
+        elif out == 'sim':
+            eps = list()
+            ex_comp = list()
+            ey_comp = list()
+            ez_comp = list()
+
+            sim().run(at_beginning(slice_dielectric, slice_xy),
+                      at_every(dt, slice_xy),
+                      until_after_sources=time)
+            np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
+            np.savez(path_e + 'ex', ex=ex_comp)
+            np.savez(path_e + 'ey', ey=ey_comp)
+            np.savez(path_e + 'ez', ez=ez_comp)
+
+            return print('---E saved---')
+
 
     start()
