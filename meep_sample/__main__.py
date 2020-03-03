@@ -52,6 +52,6 @@ elif arg.out == 'sim':
     directory('/ez_img')
     path_e = directory('/')
     sim.sim_run(arg.res, arg.rad, arg.pml, cm.material_lib_dict(arg.mat, arg.u),
-                arg.fcen, arg.df, arg.rem, arg.t, arg.dt, path_e)
+                arg.fcen, arg.df, arg.rem, arg.t, arg.dt, path_e, arg.out, arg.u)
 elif arg.out == 'gif_ez_xy':
     visualisation.electric_field(arg.n)
