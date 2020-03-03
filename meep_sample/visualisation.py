@@ -25,7 +25,7 @@ def electric_field(name_simulation):
         for time in range(np.size(comp, 0)):
             plt.figure(0)
             plt.matshow(eps_axes.transpose(), interpolation='spline36', cmap='binary', fignum=0)
-            plt.matshow(comp[time][0:][0:].transpose(), interpolation='spline36', cmap='RdBu', alpha=0.9, fignum=0)
+            plt.matshow(comp[0:][0:][time].transpose(), interpolation='spline36', cmap='RdBu', alpha=0.9, fignum=0)
             plt.savefig('meep_sample/out/' + name_simulation + '/' + comp_name + '_img/' + comp_name + '_' + str(time))
             plt.close()
         return print('save: ' + comp_name)
@@ -35,7 +35,7 @@ def electric_field(name_simulation):
         plt.imshow(eps_axes.transpose(), interpolation='spline36', cmap='binary')
         fig_list = []
 
-        for time in range(np.size(comp, 0) - 1):
+        for time in range(np.size(comp, 0, ) - 1):
             plt.imshow(comp[time][0:][0:].transpose(),
                        interpolation='spline36', cmap='RdBu', alpha=0.9)
 

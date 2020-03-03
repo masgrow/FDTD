@@ -45,7 +45,7 @@ if arg.out == 'harm':
                         arg.fcen, arg.df, arg.rem, arg.t)
     modes_write(mod)
 
-elif arg.out == 'sim':
+elif arg.out == 'sim' or arg.out == 'sim_res':
     directory('/eps_img')
     directory('/ex_img')
     directory('/ey_img')
