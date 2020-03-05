@@ -17,7 +17,7 @@ def init_values(material_lib):
     parser.add_argument('--rem', metavar='remote', type=float, default=0.01,
                         help='Remoteness of a source from a particle (default: 1 nm)')
     parser.add_argument('--out', metavar='output', type=str, choices=['sim', 'harm', 'out_eps', 'sim_res',
-                                                                      'gif_ez_xy', 'gif_ey_xy', 'gif_ex_xy'],
+                                                                      'ez_xy_png', 'ey_xy_png', 'ex_xy_png', 'eps_png'],
                         default='sim',
                         help='Harminv (harm)'
                              'start simulation (sim) (default: sim)'
@@ -30,6 +30,6 @@ def init_values(material_lib):
                         help='Simulation time (default: 50)')
     parser.add_argument('--n', metavar='name', type=str, default='nanoparticle',
                         help='Name for output data and folder (default: nanoparticle')
-    parser.add_argument('--dt', metavar='dtime', type=float, default=10.0,
+    parser.add_argument('--dt', metavar='dtime', type=float, default=1.0,
                         help='Time between component output E (default: 10.0')
     return parser.parse_args()

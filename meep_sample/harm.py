@@ -6,7 +6,7 @@ def harm_run(resolution, radius, pml, material, fcen, df, remote, time):
         return 2 * (radius + 0.5 * radius + pml)
 
     def cell():
-        return Vector3(s_xyz(), s_xyz(), s_xyz())
+        return Vector3(s_xyz(), s_xyz(), 0)
 
     def particle():
         return Sphere(radius, material=material)

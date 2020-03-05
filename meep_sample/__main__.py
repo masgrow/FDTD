@@ -27,6 +27,7 @@ if arg.out == 'harm':
         f.write('\n\n----start----')
         f.write('\n' + str(datetime.datetime.now()))
         f.write('\n Parameters::  radius: ' + str(arg.rad))
+        f.write('   unit length: ' + str(arg.u))
         f.write('   material: ' + str(arg.mat))
         f.write('   fcen: ' + str(arg.fcen))
         f.write('   fwidth: ' + str(arg.df))
@@ -53,5 +54,5 @@ elif arg.out == 'sim' or arg.out == 'sim_res':
     path_e = directory('/')
     sim.sim_run(arg.res, arg.rad, arg.pml, cm.material_lib_dict(arg.mat, arg.u),
                 arg.fcen, arg.df, arg.rem, arg.t, arg.dt, path_e, arg.out, arg.u)
-elif arg.out == 'gif_ez_xy':
-    visualisation.electric_field(arg.n)
+else:
+    visualisation.electric_field(arg.n, arg.out)

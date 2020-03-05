@@ -4,11 +4,11 @@ import numpy as np
 
 
 def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_e, out, u):
-    def s_xyz():
-        return 2 * (radius + 0.5 * radius + pml)
+    def s_xyz(rad, dpml):
+        return 2 * (rad + 0.5 * rad + dpml)
 
     def cell():
-        return Vector3(s_xyz(), s_xyz(), s_xyz())
+        return Vector3(s_xyz(radius, pml), s_xyz(radius, pml), 0)
 
     def particle():
         return Sphere(radius, material=material)
@@ -30,17 +30,17 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
         def slice_dielectric(sim):
             def xy():
                 return eps.append(sim.get_array(component=Dielectric,
-                                                size=Vector3(s_xyz(), s_xyz(), 0),
+                                                size=Vector3(s_xyz(radius, 0), s_xyz(radius, 0), 0),
                                                 center=Vector3(0, 0, 0)))
 
             def xz():
                 return eps.append(sim.get_array(component=Dielectric,
-                                                size=Vector3(s_xyz(), 0, s_xyz()),
+                                                size=Vector3(s_xyz(radius, 0), 0, s_xyz(radius, 0)),
                                                 center=Vector3(0, 0, 0)))
 
             def yz():
                 return eps.append(sim.get_array(component=Dielectric,
-                                                size=Vector3(0, s_xyz(), s_xyz()),
+                                                size=Vector3(0, s_xyz(radius, 0), s_xyz(radius, 0)),
                                                 center=Vector3(0, 0, 0)))
 
             xy()
@@ -51,17 +51,17 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
         def slice_xy(sim):
             def array_ex():
                 return ex_comp.append(sim.get_array(component=Ex,
-                                                    size=Vector3(s_xyz(), s_xyz(), 0),
+                                                    size=Vector3(s_xyz(radius, 0), s_xyz(radius, 0), 0),
                                                     center=Vector3(0, 0, 0)))
 
             def array_ey():
                 return ey_comp.append(sim.get_array(component=Ey,
-                                                    size=Vector3(s_xyz(), s_xyz(), 0),
+                                                    size=Vector3(s_xyz(radius, 0), s_xyz(radius, 0), 0),
                                                     center=Vector3(0, 0, 0)))
 
             def array_ez():
                 return ez_comp.append(sim.get_array(component=Ez,
-                                                    size=Vector3(s_xyz(), s_xyz(), 0),
+                                                    size=Vector3(s_xyz(radius, 0), s_xyz(radius, 0), 0),
                                                     center=Vector3(0, 0, 0)))
 
             array_ex()
@@ -76,30 +76,19 @@ def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_
             np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
             print('---eps saved---')
 
-        elif out == 'sim':
+        else:
             eps = list()
             ex_comp = list()
             ey_comp = list()
             ez_comp = list()
-
-            sim().run(at_beginning(slice_dielectric, slice_xy),
-                      at_every(dt, slice_xy),
-                      until_after_sources=time)
-            np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
-            np.savez(path_e + 'ex', ex=ex_comp)
-            np.savez(path_e + 'ey', ey=ey_comp)
-            np.savez(path_e + 'ez', ez=ez_comp)
-
-            return print('---E saved---')
-        elif out == 'sim_res':
-            eps = list()
-            ex_comp = list()
-            ey_comp = list()
-            ez_comp = list()
-
-            sim().run(at_beginning(slice_dielectric, slice_xy),
-                      at_every((u/fcen)/20, slice_xy),
-                      until_after_sources=(u/fcen))
+            if out == 'sim':
+                sim().run(at_beginning(slice_dielectric, slice_xy),
+                          at_every(dt, slice_xy),
+                          until_after_sources=time)
+            elif out == 'sim_res':
+                sim().run(at_beginning(slice_dielectric, slice_xy),
+                          at_every((u/fcen)/20, slice_xy),
+                          until_after_sources=u/fcen)
             np.savez(path_e + 'eps', eps_xy=eps[0], eps_xz=eps[1], eps_yz=eps[2])
             np.savez(path_e + 'ex', ex=ex_comp)
             np.savez(path_e + 'ey', ey=ey_comp)
