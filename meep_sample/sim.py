@@ -3,24 +3,11 @@ from meep import Vector3, Sphere, Source, GaussianSource, Ez, Ey, Ex, Dielectric
 import numpy as np
 
 
-def sim_run(resolution, radius, pml, material, fcen, df, remote, time, dt, path_e, out, u):
-    def s_xyz(rad, dpml):
-        return 2 * (rad + 0.5 * rad + dpml)
-
-    def cell():
-        return Vector3(s_xyz(radius, pml), s_xyz(radius, pml), 0)
-
-    def particle():
-        return Sphere(radius, material=material)
-
-    def source():
-        return Source(GaussianSource(frequency=fcen, fwidth=df),
-                      component=Ez,
-                      center=Vector3(radius + remote, 0, 0))
+def sim_run(resolution, cell, geom, source, time, dt, path_e, out, u):
 
     def sim():
-        simulation = Simulation(cell_size=cell(),
-                                geometry=[particle()],
+        simulation = Simulation(cell_size=cell,
+                                geometry=geom,
                                 sources=[source()],
                                 boundary_layers=[PML(pml)],
                                 resolution=resolution)
