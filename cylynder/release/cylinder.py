@@ -1,3 +1,4 @@
+# подклюаемые модули
 from meep import Vector3, Cylinder, inf, LorentzianSusceptibility, Medium, Volume, Source, GaussianSource, Ex, \
     Simulation, PML, FluxRegion, get_flux_freqs, get_fluxes, at_every, stop_when_fields_decayed, Animate2D, \
     in_volume, Mirror, X, DrudeSusceptibility, FreqRange
@@ -7,6 +8,7 @@ import numpy as np
 from os import path, makedirs
 
 
+# функция возвращает материал(Medium) по клучу из словаря материалов
 def material(material_name):
     def meep_sio2():
         SiO2_range = FreqRange(min=um_scale / 1.77, max=um_scale / 0.25)
@@ -171,6 +173,7 @@ def material(material_name):
         Pd = Medium(epsilon=1.0, E_susceptibilities=Pd_susc, valid_freq_range=metal_range)
         return Pd
 
+    # um_scale характерная шкала длины системы (1 = 1мкм)
     um_scale = 0.1
     eV_um_scale = um_scale / 1.23984193
     metal_range = FreqRange(min=um_scale / 12.398, max=um_scale / .24797)
@@ -185,6 +188,7 @@ def material(material_name):
     return material_dict[material_name]
 
 
+# функция parser предоставляет интерфейс через командную строку
 def parser():
     material_names = ['custom_ag', 'meep_ag', 'meep_au', 'meep_pt', 'meep_pd', 'vac', 'meep_sio2']
     parse = argparse.ArgumentParser('cylynder')
@@ -207,19 +211,20 @@ def parser():
     parse.add_argument('-dpml', metavar='dpml', type=float, default=1,
                        help='PML layer thickness. default: 1')
     parse.add_argument('-nfreq', metavar='nfreq', type=int, default=60,
-                       help='')
+                       help='number equally spaced frequencies covering the frequency range fcen-df/2 to fcen+df/2')
     parse.add_argument('-name', metavar='outpath', type=str, default='rad_25_Ag_full',
                        help='Output folder name. default: rad_25_Ag_full')
     parse.add_argument('-cutoff', metavar='cutoff', type=float, default=5.0,
                        help='How many widths the current decays for before it is cut off and set to zero. default: 5.0')
     parse.add_argument('-decay', metavar='decay', type=float, default=1e-6,
-                       help='see: https://meep.readthedocs.io/en/latest/Python_User_Interface/#run-functions (stop_when_fields_decayed). default: 1e-6')
+                       help='field difference condition default: 1e-6')
     parse.add_argument('-rt', metavar='real_time', type=bool, default=True,
                        help='output ex during calculation. default: True')
     arg = vars(parse.parse_args())
     return arg
 
 
+# замыкание принимает число a и возвращает функцию, умножающую передаваемые в нее числа на a
 def rad_units(radius):
     def unit(distance):
         return radius * distance
@@ -227,33 +232,38 @@ def rad_units(radius):
     return unit
 
 
+# Функция возвращающая список геометрических объектов. В результате можно получить трубу или цилиндр
 def tube(rad1, rad2, mat1, mat2):
     return [Cylinder(radius=rad1, height=inf, material=material(mat1)),
             Cylinder(radius=rad2, height=inf, material=material(mat2))]
 
 
+# функция возвращает Vector3 вычислительной области
 def cell(u, dpml):
     return Vector3(u(8) + 2 * dpml, u(8) + 2 * dpml)
 
 
+# функция возвращает объект класса Source: гауссов источник плоской волны с изменяемыми параметрами гаусоиды
 def source(fcen, df, cutoff, u):
-    return [Source(GaussianSource(frequency=fcen, width=df, cutoff=cutoff), Ex,
+    return [Source(GaussianSource(frequency=fcen, width=df, cutoff=cutoff, is_integrated=True), Ex,
                    center=Vector3(0, u(4)), size=Vector3(u(8), 0))]
 
 
+# функция, возвращающая объект класса Simulation
 def simulation(cell_size, resolution, geom, dpml, sources):
     return Simulation(cell_size=cell_size,
                       resolution=resolution,
                       geometry=geom,
                       boundary_layers=[PML(dpml)],
                       sources=sources,
-                      output_single_precision=True,
-                      eps_averaging=False,
-                      force_complex_fields=False,
-                      Courant=0.25,
-                      symmetries=[Mirror(direction=X, phase=-1)])
+                      output_single_precision=True,                 # включение вычислений с одинарной точностью
+                      eps_averaging=False,                          # отключение субпиксельного сглаживания
+                      force_complex_fields=False,                   # отключение комплексных полей
+                      Courant=0.25,                                 # коэффицент куранта
+                      symmetries=[Mirror(direction=X, phase=-1)])   # установка симетрии по ои Х
 
 
+# замыкание, упрощает создание FluxRegion
 def flux_add(fcen, df, nfreq, u):
     def flux(sim, x, y, sx, sy):
         return sim.add_flux(fcen, df, nfreq,
@@ -262,6 +272,7 @@ def flux_add(fcen, df, nfreq, u):
     return flux
 
 
+# функция выполняет визуализация симуляции и сохранение результата в виде png в выходную папку.
 def plot(sim, name, out_path):
     plt.figure()
     sim.plot2D(boundary_parameters={'hatch': 'o', 'linewidth': 1.5, 'facecolor': 'y',
@@ -271,9 +282,11 @@ def plot(sim, name, out_path):
     plt.close()
 
 
+# модель эксперимента без геометрии
 def sim_no_geom(cell_size, resolution, dpml, sources, fl, u, decay, out_path):
     sim = simulation(cell_size, resolution, [], dpml, sources)
 
+    # размещение FluxRegion
     top = fl(sim, 0, 2, 4, 0)
     bottom = fl(sim, 0, -2, 4, 0)
     left = fl(sim, -2, 0, 0, 4)
@@ -282,6 +295,7 @@ def sim_no_geom(cell_size, resolution, dpml, sources, fl, u, decay, out_path):
 
     plot(sim, 'no_geom', out_path)
 
+    # запуск симуляции для вычисления исходящего потока и частот
     sim.run(until_after_sources=stop_when_fields_decayed(1, Ex, Vector3(0, u(-4)), decay))
 
     flux_data = dict(top=sim.get_flux_data(top),
@@ -300,14 +314,17 @@ def sim_no_geom(cell_size, resolution, dpml, sources, fl, u, decay, out_path):
     return dict(flux_data=flux_data, incident_pow=incident_pow, wl=wave_length)
 
 
+# Модель эксперимента с геометрией
 def sim_with_geom(cell_size, resolution, geom, dpml, sources, fl, u, out_path, decay, rt, fl_data=None, scat=True):
     sim = simulation(cell_size, resolution, geom, dpml, sources)
 
+    # размещение FluxRegion
     top = fl(sim, 0, 2, 4, 0)
     bottom = fl(sim, 0, -2, 4, 0)
     left = fl(sim, -2, 0, 0, 4)
     right = fl(sim, 2, 0, 0, 4)
 
+    # вычисление спектров рассеяния, поглащения и экстинции
     if scat:
 
         sim.load_minus_flux_data(top, fl_data['top'])
@@ -354,36 +371,46 @@ def sim_with_geom(cell_size, resolution, geom, dpml, sources, fl, u, out_path, d
         return abs_pow
 
 
+# основная функция связывающая все элементы программы
 def initialize():
+    # получение параметров модели
     param = parser()
 
-    unit = rad_units(param['rad1'])
-    geom = tube(param['rad1'], param['rad2'], param['mat1'], param['mat2'])
-    src = source(param['fcen'], param['df'], param['cutoff'], unit)
-    cz = cell(unit, param['dpml'])
-    flux = flux_add(param['fcen'], param['df'], param['nfreq'], unit)
-    out_path = path.join(path.abspath('.'), param['name'])
+    # создание ссылок на параметры модели
+    unit = rad_units(param['rad1'])                                          # коэффицент масштабирования
+    geom = tube(param['rad1'], param['rad2'], param['mat1'], param['mat2'])  # параметры определяющие геометрию
+    src = source(param['fcen'], param['df'], param['cutoff'], unit)          # параметры определяющие источник
+    cz = cell(unit, param['dpml'])                                           # параметры определяющие счетную область
+    flux = flux_add(param['fcen'], param['df'], param['nfreq'], unit)        # параметры определяющие FluxRegion
+    out_path = path.join(path.abspath('.'), param['name'])                   # путь для сохранения выходных файлов
 
+    # создание папки для выходных файлов
     makedirs(out_path, mode=0o777, exist_ok=True)
 
+    # запуск симуляции без геометрии
     no_geom_data = sim_no_geom(cz, param['res'], param['dpml'], src, flux, unit, param['decay'], out_path)
 
+    # получение измеренных длинн волн и исходящего
     wl = no_geom_data['wl']
     inc = no_geom_data['incident_pow']
     fl_date = no_geom_data['flux_data']
 
+    # запуск симуляции для расчетов спекктров рассеяния и поглащения
     scat_pow = sim_with_geom(cz, param['res'], geom, param['dpml'], src, flux, unit, out_path, param['decay'],
                              param['rt'], fl_date)
     abs_pow = sim_with_geom(cz, param['res'], geom, param['dpml'], src, flux, unit, out_path, param['decay'],
                             param['rt'], fl_date,
                             False)
 
+    # поток приходящийся на cros ssection
     scat_cross = np.asarray(scat_pow / inc)
     abs_cross = np.asarray(abs_pow / inc)
 
+    # вычисление спектра экстинции
     ext_cross = np.asarray(scat_cross + abs_cross)
     wl = np.asarray(wl)
 
+    # сохранение спектра в файл формата txt
     spectrum_date = np.array([wl, scat_cross, abs_cross, ext_cross]).transpose()
 
     np.savetxt(fname=path.join(out_path, 'spectrums.txt'),
@@ -393,15 +420,17 @@ def initialize():
                delimiter='    ',
                newline='\n')
 
+    # построение спектров рассеяния, поглащения и экстинции и сохранение их в выходную папку
     plt.figure()
     plt.plot(wl, 100 * scat_cross, 'bo-', label='scattering')
     plt.plot(wl, 100 * abs_cross, 'ro-', label='absorption')
     plt.plot(wl, 100 * ext_cross, 'go-', label='extinction')
-    plt.xlabel("wavelength (μm)")
+    plt.xlabel("wavelength (nm)")
     plt.ylabel("cross-section (nm)")
     plt.legend(loc="upper right")
     plt.savefig(path.join(out_path, 'abs_scat_ext.png'))
     plt.close()
 
 
+# запуск программы
 initialize()
