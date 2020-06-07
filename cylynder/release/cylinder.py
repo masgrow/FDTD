@@ -193,14 +193,15 @@ def parser():
     material_names = ['custom_ag', 'meep_ag', 'meep_au', 'meep_pt', 'meep_pd', 'vac', 'meep_sio2']
     parse = argparse.ArgumentParser('cylynder')
     parse.add_argument('-res', metavar='resolution', type=int, default=25,
-                       help='Specifies the computational grid resolution in pixels per distance unit default: 25px/0.1um')
+                       help='Specifies the computational grid resolution in pixels per distance unit'
+                            ' default: 25px/0.1um')
     parse.add_argument('-rad1', metavar='radius', type=float, default=0.25,
                        help='The radius of the larger cylinder. default: 0.25 (25nm)')
     parse.add_argument('-rad2', metavar='tuberad', type=float, default=0.0,
                        help='Smaller cylinder radius. default: 0.0')
     parse.add_argument('-mat1', metavar='material1', type=str, default='custom_ag',
                        choices=material_names,
-                       help=':Large cylinder material. default: custom_ag')
+                       help='Large cylinder material. default: custom_ag')
     parse.add_argument('-mat2', metavar='material2', type=str, default='custom_ag',
                        choices=material_names,
                        help='Smaller cylinder material. default: custom_ag')
@@ -211,13 +212,14 @@ def parser():
     parse.add_argument('-dpml', metavar='dpml', type=float, default=1,
                        help='PML layer thickness. default: 1')
     parse.add_argument('-nfreq', metavar='nfreq', type=int, default=60,
-                       help='number equally spaced frequencies covering the frequency range fcen-df/2 to fcen+df/2')
+                       help='number equally spaced frequencies covering the frequency range fcen-df/2 to fcen+df/2.'
+                       ' default 60')
     parse.add_argument('-name', metavar='outpath', type=str, default='rad_25_Ag_full',
                        help='Output folder name. default: rad_25_Ag_full')
     parse.add_argument('-cutoff', metavar='cutoff', type=float, default=5.0,
                        help='How many widths the current decays for before it is cut off and set to zero. default: 5.0')
     parse.add_argument('-decay', metavar='decay', type=float, default=1e-6,
-                       help='field difference condition default: 1e-6')
+                       help='field difference condition. default: 1e-6')
     parse.add_argument('-rt', metavar='real_time', type=bool, default=True,
                        help='output ex during calculation. default: True')
     arg = vars(parse.parse_args())
